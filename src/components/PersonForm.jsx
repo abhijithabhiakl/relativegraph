@@ -26,6 +26,7 @@ export default function PersonForm({ person, onClose }) {
         defaultValues: isEdit
             ? {
                 firstName: person.firstName,
+                middleName: person.middleName || '',
                 lastName: person.lastName,
                 nickname: person.nickname || '',
                 gender: person.gender,
@@ -36,6 +37,7 @@ export default function PersonForm({ person, onClose }) {
             }
             : {
                 firstName: '',
+                middleName: '',
                 lastName: '',
                 nickname: '',
                 gender: 'male',
@@ -158,6 +160,10 @@ export default function PersonForm({ person, onClose }) {
                             <label>First Name *</label>
                             <input {...register('firstName', { required: 'Required' })} placeholder="First name" />
                             {errors.firstName && <span className="form-error">{errors.firstName.message}</span>}
+                        </div>
+                        <div className="form-group">
+                            <label>Middle Name</label>
+                            <input {...register('middleName')} placeholder="Middle name" />
                         </div>
                         <div className="form-group">
                             <label>Last Name *</label>

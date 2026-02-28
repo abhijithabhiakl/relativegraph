@@ -1,21 +1,26 @@
-import { createContext, useContext, useReducer, useEffect } from 'react';
+import { createContext, useContext, useReducer, useState } from 'react';
 import { initialFamilyData } from '../data/familyData';
+import { exampleFamilyData } from '../data/exampleFamilyData';
 
 const STORAGE_KEY = 'relationtree_family_data';
 
-function loadFromStorage() {
+// ─── Initializer ──────────────────────────────────────────────────────────────
+const loadFromStorage = () => {
     try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) return JSON.parse(raw);
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) return JSON.parse(stored);
     } catch (_) { }
     return initialFamilyData;
-}
+};
 
-function saveToStorage(data) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
+// ─── Save Helper ──────────────────────────────────────────────────────────────
+const saveToStorage = (state) => {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (_) { }
+};
 
-// ─── Reducer ─────────────────────────────────────────────────────────────────
+// ─── Reducer ──────────────────────────────────────────────────────────────────
 function reducer(state, action) {
     let newState;
     switch (action.type) {
@@ -62,13 +67,20 @@ const FamilyContext = createContext(null);
 
 export function FamilyProvider({ children }) {
     const [state, dispatch] = useReducer(reducer, null, loadFromStorage);
+    const [isExampleMode, setIsExampleMode] = useState(false);
+
+    const activePeople = isExampleMode ? exampleFamilyData.people : state.people;
 
     // Helpers
-    const addPerson = (person) => dispatch({ type: 'ADD_PERSON', person });
-    const updatePerson = (person) => dispatch({ type: 'UPDATE_PERSON', person });
-    const deletePerson = (id) => dispatch({ type: 'DELETE_PERSON', id });
+    const toggleExampleMode = () => setIsExampleMode((prev) => !prev);
+
+    // Only allow mutations if NOT in example mode
+    const addPerson = (person) => { if (!isExampleMode) dispatch({ type: 'ADD_PERSON', person }) };
+    const updatePerson = (person) => { if (!isExampleMode) dispatch({ type: 'UPDATE_PERSON', person }) };
+    const deletePerson = (id) => { if (!isExampleMode) dispatch({ type: 'DELETE_PERSON', id }) };
 
     const exportJSON = () => {
+        // Always export the real saved state, not the example mock
         const blob = new Blob([JSON.stringify(state, null, 2)], {
             type: 'application/json',
         });
@@ -86,6 +98,7 @@ export function FamilyProvider({ children }) {
             try {
                 const data = JSON.parse(e.target.result);
                 dispatch({ type: 'IMPORT_DATA', data });
+                if (isExampleMode) setIsExampleMode(false); // turn off example mode if importing
             } catch (_) {
                 alert('Invalid JSON file');
             }
@@ -93,11 +106,21 @@ export function FamilyProvider({ children }) {
         reader.readAsText(file);
     };
 
-    const getPersonById = (id) => state.people.find((p) => p.id === id);
+    const getPersonById = (id) => activePeople.find((p) => p.id === id);
 
     return (
         <FamilyContext.Provider
-            value={{ people: state.people, addPerson, updatePerson, deletePerson, exportJSON, importJSON, getPersonById }}
+            value={{
+                people: activePeople,
+                isExampleMode,
+                toggleExampleMode,
+                addPerson,
+                updatePerson,
+                deletePerson,
+                exportJSON,
+                importJSON,
+                getPersonById
+            }}
         >
             {children}
         </FamilyContext.Provider>

@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { Lock, LogOut, UserPlus, Download, Upload, Edit2, Trash2, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext';
 import { useFamily } from '../store/familyStore';
+import { exampleFamilyData } from '../data/exampleFamilyData';
 import LoginModal from './LoginModal';
 import PersonForm from './PersonForm';
 
-export default function EditFAB({ selectedId }) {
+export default function EditFAB({ selectedId, isMobilePanelOpen }) {
     const { isAdmin, logout } = useAuth();
-    const { getPersonById, deletePerson, exportJSON, importJSON } = useFamily();
+    const { getPersonById, deletePerson, exportJSON, importJSON, isExampleMode, toggleExampleMode } = useFamily();
     const [showLogin, setShowLogin] = useState(false);
     const [showAddForm, setShowAddForm] = useState(false);
     const [editPerson, setEditPerson] = useState(null);
@@ -50,11 +51,12 @@ export default function EditFAB({ selectedId }) {
 
     return (
         <>
-            <div className="fab-toolbar">
-                <span className="fab-admin-tag">✓ Admin</span>
-
+            <div className={`fab-toolbar ${isMobilePanelOpen ? 'mobile-hidden' : ''}`}>
+                <span className="fab-admin-tag">
+                    {isExampleMode ? '✓ Reference Mode' : '✓ Admin'}
+                </span>
                 {/* Person-specific actions — shown when a node is selected */}
-                {selectedPerson && (
+                {selectedPerson && !isExampleMode && (
                     <>
                         <div className="fab-toolbar-divider" />
                         <button
@@ -100,13 +102,26 @@ export default function EditFAB({ selectedId }) {
                 )}
 
                 {/* Global admin actions */}
+                {!isExampleMode && (
+                    <button
+                        className="fab-tool-btn"
+                        title="Add Family Member"
+                        onClick={() => setShowAddForm(true)}
+                    >
+                        <UserPlus size={18} />
+                        <span>Add</span>
+                    </button>
+                )}
                 <button
                     className="fab-tool-btn"
-                    title="Add Family Member"
-                    onClick={() => setShowAddForm(true)}
+                    title={isExampleMode ? "Exit Example Tree" : "Show Example Tree"}
+                    onClick={toggleExampleMode}
+                    style={{
+                        color: isExampleMode ? '#f59e0b' : '#06b6d4',
+                        borderColor: isExampleMode ? 'rgba(245, 158, 11, 0.3)' : 'rgba(6, 182, 212, 0.3)'
+                    }}
                 >
-                    <UserPlus size={18} />
-                    <span>Add Person</span>
+                    <span>{isExampleMode ? "Exit Example" : "Show Example"}</span>
                 </button>
                 <button className="fab-tool-btn" title="Export JSON" onClick={exportJSON}>
                     <Download size={18} />

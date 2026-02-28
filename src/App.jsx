@@ -18,12 +18,41 @@ function LegendItem({ color, label }) {
 
 function AppContent() {
   const [selectedId, setSelectedId] = useState(null);
+  // null = no panel, 'peek' = partial bottom-sheet, 'full' = fully expanded
+  const [panelState, setPanelState] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [darkMode, setDarkMode] = useState(true);
 
   const handleSelectPerson = useCallback((id) => {
-    setSelectedId((prev) => (prev === id ? null : id));
+    if (id === null) {
+      setSelectedId(null);
+      setPanelState(null);
+      return;
+    }
+    setSelectedId((prev) => {
+      if (prev === id) {
+        // Tapping the same selected node again → dismiss panel
+        setPanelState(null);
+        return null;
+      }
+      // Desktop: open fully; mobile: start in peek mode
+      setPanelState(window.innerWidth > 640 ? 'full' : 'peek');
+      return id;
+    });
   }, []);
+
+  // "Back to Graph" — deselects node + closes panel entirely
+  const handleReturn = useCallback(() => {
+    setSelectedId(null);
+    setPanelState(null);
+  }, []);
+
+  // Expand peek → full when user swipes up or taps the peek strip
+  const handleExpand = useCallback(() => {
+    setPanelState('full');
+  }, []);
+
+  const showPanel = panelState !== null;
 
   return (
     <div className={`app-root ${darkMode ? 'dark' : 'light'}`}>
@@ -67,21 +96,24 @@ function AppContent() {
         <LegendItem color="#ec4899" label="5th+" />
         <div className="legend-divider" />
         <LegendItem color="#555" label="── Parent–child" />
-        <LegendItem color="#a78bfa" label="♥ ─ ─ Spouses" />
+        <LegendItem color="#e4094b" label="♥ ─ ─ Spouses" />
       </div>
 
-      {/* Side Panel */}
-      {selectedId && (
+      {/* Side Panel / Mobile Bottom Sheet */}
+      {selectedId && showPanel && (
         <PersonPanel
           personId={selectedId}
-          onClose={() => setSelectedId(null)}
-          onSelectPerson={(id) => setSelectedId(id)}
+          panelState={panelState}
+          onClose={() => setPanelState(null)}
+          onReturn={handleReturn}
+          onExpand={handleExpand}
+          onSelectPerson={handleSelectPerson}
         />
       )}
 
-      {/* FAB — passes selectedId so admin toolbar can show Edit/Delete for chosen person */}
+      {/* FAB — hide when panel is visible on mobile */}
       <div className="fab-wrap">
-        <EditFAB selectedId={selectedId} />
+        <EditFAB selectedId={selectedId} isMobilePanelOpen={showPanel} />
       </div>
     </div>
   );

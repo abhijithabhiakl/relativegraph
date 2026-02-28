@@ -6,6 +6,7 @@ export const initialFamilyData = {
         {
             id: 'p-gg-01',
             firstName: 'Raman',
+            middleName: '',
             lastName: 'Nair',
             nickname: '',
             gender: 'male',
@@ -19,6 +20,7 @@ export const initialFamilyData = {
         {
             id: 'p-gg-02',
             firstName: 'Kamala',
+            middleName: '',
             lastName: 'Nair',
             nickname: 'Kamu',
             gender: 'female',
@@ -34,6 +36,7 @@ export const initialFamilyData = {
         {
             id: 'p-gf-01',
             firstName: 'Krishnan',
+            middleName: '',
             lastName: 'Nair',
             nickname: 'Krishnettan',
             gender: 'male',
@@ -47,6 +50,7 @@ export const initialFamilyData = {
         {
             id: 'p-gm-01',
             firstName: 'Saraswathi',
+            middleName: '',
             lastName: 'Nair',
             nickname: 'Saraswathiamma',
             gender: 'female',
@@ -62,6 +66,7 @@ export const initialFamilyData = {
         {
             id: 'p-f-01',
             firstName: 'Vijayan',
+            middleName: '',
             lastName: 'Nair',
             nickname: 'Viju',
             gender: 'male',
@@ -75,6 +80,7 @@ export const initialFamilyData = {
         {
             id: 'p-f-01-sp',
             firstName: 'Geetha',
+            middleName: '',
             lastName: 'Nair',
             nickname: '',
             gender: 'female',
@@ -88,6 +94,7 @@ export const initialFamilyData = {
         {
             id: 'p-unc-01',
             firstName: 'Suresh',
+            middleName: '',
             lastName: 'Nair',
             nickname: 'Sureshetta',
             gender: 'male',
@@ -101,6 +108,7 @@ export const initialFamilyData = {
         {
             id: 'p-unc-01-sp',
             firstName: 'Bindhu',
+            middleName: '',
             lastName: 'Nair',
             nickname: '',
             gender: 'female',
@@ -114,6 +122,7 @@ export const initialFamilyData = {
         {
             id: 'p-aunt-01',
             firstName: 'Latha',
+            middleName: '',
             lastName: 'Menon',
             nickname: 'Lathachechi',
             gender: 'female',
@@ -127,6 +136,7 @@ export const initialFamilyData = {
         {
             id: 'p-aunt-01-sp',
             firstName: 'Rajesh',
+            middleName: '',
             lastName: 'Menon',
             nickname: 'Rajeshettan',
             gender: 'male',
@@ -142,6 +152,7 @@ export const initialFamilyData = {
         {
             id: 'p-you',
             firstName: 'Arjun',
+            middleName: '',
             lastName: 'Nair',
             nickname: 'You',
             gender: 'male',
@@ -155,6 +166,7 @@ export const initialFamilyData = {
         {
             id: 'p-sib-01',
             firstName: 'Priya',
+            middleName: '',
             lastName: 'Nair',
             nickname: '',
             gender: 'female',
@@ -168,6 +180,7 @@ export const initialFamilyData = {
         {
             id: 'p-cou-01',
             firstName: 'Arun',
+            middleName: '',
             lastName: 'Nair',
             nickname: '',
             gender: 'male',
@@ -181,6 +194,7 @@ export const initialFamilyData = {
         {
             id: 'p-cou-02',
             firstName: 'Divya',
+            middleName: '',
             lastName: 'Nair',
             nickname: '',
             gender: 'female',
@@ -194,6 +208,7 @@ export const initialFamilyData = {
         {
             id: 'p-cou-03',
             firstName: 'Rahul',
+            middleName: '',
             lastName: 'Menon',
             nickname: '',
             gender: 'male',
@@ -209,6 +224,7 @@ export const initialFamilyData = {
         {
             id: 'm-gf-01',
             firstName: 'Thomas',
+            middleName: '',
             lastName: 'Varghese',
             nickname: 'Thomasachan',
             gender: 'male',
@@ -222,6 +238,7 @@ export const initialFamilyData = {
         {
             id: 'm-gm-01',
             firstName: 'Annamma',
+            middleName: '',
             lastName: 'Varghese',
             nickname: 'Ammachi',
             gender: 'female',
@@ -235,6 +252,7 @@ export const initialFamilyData = {
         {
             id: 'm-uncle-01',
             firstName: 'Jose',
+            middleName: '',
             lastName: 'Varghese',
             nickname: 'Joseavachan',
             gender: 'male',
@@ -248,6 +266,7 @@ export const initialFamilyData = {
         {
             id: 'm-uncle-01-sp',
             firstName: 'Mariamma',
+            middleName: '',
             lastName: 'Varghese',
             nickname: 'Mariyamma',
             gender: 'female',
@@ -261,6 +280,7 @@ export const initialFamilyData = {
         {
             id: 'm-cou-01',
             firstName: 'Kevin',
+            middleName: '',
             lastName: 'Varghese',
             nickname: '',
             gender: 'male',

@@ -47,7 +47,7 @@ function PersonNode({ data }) {
             }}
             onClick={() => onSelect(person.id)}
         >
-            <Handle type="target" position={Position.Top} style={{ opacity: 0 }} />
+            <Handle type="target" position={Position.Left} style={{ opacity: 0 }} />
 
             <div className="person-node-avatar" style={{ background: colors.border }}>
                 {person.photoUrl ? (
@@ -63,15 +63,20 @@ function PersonNode({ data }) {
                     {isYou ? '⭐ ' : ''}{person.firstName}
                     {person.nickname && person.nickname !== 'You' ? ` "${person.nickname}"` : ''}
                 </div>
-                <div className="person-node-lastname" style={{ color: colors.text }}>
+                {person.middleName && (
+                    <div className="person-node-middlename" style={{ color: colors.text, opacity: 0.8, fontSize: '0.85em', marginTop: '-2px' }}>
+                        {person.middleName}
+                    </div>
+                )}
+                <div className="person-node-lastname" style={{ color: colors.text, marginTop: person.middleName ? '0' : '2px' }}>
                     {person.lastName}
                 </div>
-                {years && <div className="person-node-years">{years}</div>}
+                {years && <div className="person-node-years" style={{ marginTop: '4px' }}>{years}</div>}
             </div>
 
             <div className="person-node-side-dot" style={{ background: colors.dot }} />
 
-            <Handle type="source" position={Position.Bottom} style={{ opacity: 0 }} />
+            <Handle type="source" position={Position.Right} style={{ opacity: 0 }} />
         </div>
     );
 }

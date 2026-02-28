@@ -393,7 +393,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0;
-  animation: slideFromRight 0.25s ease;
+  animation: slideFromRight 0.25s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 @keyframes slideFromRight {
@@ -408,31 +408,137 @@ body {
   }
 }
 
+@keyframes slideFromBottom {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Drag handle indicator (hidden on desktop) */
+.panel-drag-handle {
+  display: none;
+  width: 36px;
+  height: 4px;
+  background: var(--surface-border);
+  border-radius: 2px;
+  margin: 0 auto;
+  flex-shrink: 0;
+}
+
+/* Back button — hidden on desktop, shown on mobile */
+.panel-back-btn {
+  display: none;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--surface-border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.panel-back-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+}
+
+/* Safe-area bottom spacer for iPhone home bar */
+.panel-safe-area-bottom {
+  height: env(safe-area-inset-bottom, 0px);
+  min-height: 0;
+  flex-shrink: 0;
+}
+
+/* Full-content wrapper: flex column that fills the panel after drag handle / peek bar */
+.panel-full-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Peek bar: compact name + swipe hint strip, hidden on desktop */
+.panel-peek-bar {
+  display: none;
+}
+
+/* Swipe hint */
+.panel-swipe-hint {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  animation: swipeHintPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes swipeHintPulse {
+
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+.panel-peek-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80vw;
+}
+
 .panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--surface-border);
   position: sticky;
   top: 0;
   background: inherit;
   backdrop-filter: inherit;
+  -webkit-backdrop-filter: inherit;
   z-index: 2;
+  min-height: 52px;
 }
 
 .panel-close {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 8px;
   border: 1px solid var(--surface-border);
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .panel-close:hover {
@@ -1076,7 +1182,23 @@ body {
 
 /* ─── Light Mode Adjustments ────────────────────────────────────────────────── */
 .light .person-node {
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.08);
+}
+
+/* In light mode, the node backgrounds need to be lighter so text remains readable,
+   but we still want the generation palette colors. We use CSS blend modes or opacity overrides here */
+.light .person-node {
+  background: var(--surface) !important;
+  /* Force node body to white/glass */
+}
+
+/* Make sure the text on light nodes becomes dark, EXCEPT the lastname which uses the palette string (we'll dim it) */
+.light .person-node-name {
+  color: var(--text);
+}
+
+.light .person-node-years {
+  color: var(--text-muted);
 }
 
 .light .search-bar input {
@@ -1088,38 +1210,276 @@ body {
   background: rgba(0, 0, 0, 0.15);
 }
 
-/* ─── Responsive ────────────────────────────────────────────────────────────── */
-@media (max-width: 640px) {
-  .top-bar {
-    padding: 0 12px;
-    gap: 8px;
-  }
+.light .react-flow__controls-button {
+  background: #fff !important;
+  border-color: #e2e8f0 !important;
+  fill: #475569 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
 
-  .legend {
-    display: none;
+.light .react-flow__controls-button:hover {
+  background: #f8fafc !important;
+}
+
+.light .panel-rel-chip {
+  background: #fff;
+  border-color: #cbd5e1;
+}
+
+.light .panel-rel-chip:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.light .person-node-avatar {
+  color: #fff;
+  /* Initials always white inside the colored avatar circle */
+}
+
+/* ─── Responsive — Mobile-first hardcore optimisation ───────────────────────── */
+@media (max-width: 640px) {
+
+  /* ── Top Bar ─────────────────────────────────────────────────────────────── */
+  .top-bar {
+    padding: 0 10px;
+    gap: 6px;
+    height: 54px;
   }
 
   .brand-subtitle {
     display: none;
   }
 
+  .brand-title {
+    font-size: 0.95rem;
+  }
+
+  /* Force search bar to take remaining space */
+  .top-bar-center {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .search-bar {
+    max-width: 100%;
+  }
+
+  /* Touch targets — theme toggle */
+  .theme-toggle {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+  }
+
+  /* ── Legend — hide on mobile ─────────────────────────────────────────────── */
+  .legend {
+    display: none;
+  }
+
+  /* ── Person Panel — bottom sheet ─────────────────────────────────────────── */
   .person-panel {
+    /* Override desktop sidebar positioning */
+    position: fixed;
+    right: 0;
+    left: 0;
+    top: auto;
+    bottom: 0;
     width: 100%;
+    height: auto;
+    max-height: 82vh;
+    border-left: none;
+    border-top: 1px solid var(--surface-border);
+    border-radius: 20px 20px 0 0;
+    /* Replace side-slide with bottom-slide */
+    animation: slideFromBottom 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+    z-index: 200;
+    /* Add backdrop shadow */
+    box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.55);
+    /* Transition for peek → full expansion */
+    transition: max-height 0.35s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.2s;
+  }
+
+  /* Peek mode: panel sits as a slim peek strip at the bottom */
+  .person-panel.panel-peek {
+    max-height: 82px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Full mode: normal expanded bottom sheet */
+  .person-panel.panel-full {
+    max-height: 82vh;
+    overflow-y: auto;
+    cursor: default;
+  }
+
+  /* Peek bar: shown in peek mode on mobile */
+  .panel-peek .panel-peek-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 20px 12px;
+  }
+
+  /* Hide peek bar in full mode */
+  .panel-full .panel-peek-bar {
+    display: none;
+  }
+
+  /* Show drag handle on mobile */
+  .panel-drag-handle {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 4px;
+    order: -2;
+    /* before header */
+  }
+
+  /* Show Back button on mobile */
+  .panel-back-btn {
+    display: flex;
+  }
+
+  /* Header touch target */
+  .panel-header {
+    min-height: 56px;
+    padding: 8px 14px;
+    /* Make header sticky inside the scroll area */
+    top: 0;
+  }
+
+  /* Increase touch targets for relation chips */
+  .panel-rel-chip {
+    padding: 8px 14px;
+    font-size: 0.82rem;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Panel full-width when open acts as modal — dim backdrop not needed
+     since the canvas is still partially visible above the sheet */
+  .panel-avatar {
+    width: 70px;
+    height: 70px;
+  }
+
+  .panel-avatar-wrap {
+    padding: 12px 16px 8px;
+  }
+
+  .panel-name {
+    font-size: 1.05rem;
+  }
+
+  /* ── ReactFlow MiniMap — hide on mobile ──────────────────────────────────── */
+  .react-flow__minimap {
+    display: none !important;
+  }
+
+  /* Push ReactFlow controls out of the FAB zone */
+  .react-flow__controls {
+    bottom: 80px !important;
+    left: 12px !important;
+    right: auto !important;
+  }
+
+  /* ── FAB Toolbar — mobile stack ──────────────────────────────────────────── */
+  .fab-wrap {
+    right: 0;
+    left: 0;
+    bottom: 0;
+    /* Horizontal centred strip along the bottom */
+    display: flex;
+    justify-content: center;
+    padding-bottom: env(safe-area-inset-bottom, 6px);
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 6px;
+    background: var(--topbar-bg);
+    border-top: 1px solid var(--surface-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: 150;
   }
 
   .fab-toolbar {
+    /* Switch to a wrapping row with smaller pills */
     flex-wrap: wrap;
-    border-radius: 16px;
-    right: 12px;
-    bottom: 12px;
+    justify-content: center;
+    border-radius: 12px;
+    padding: 6px 10px;
+    gap: 6px;
+    width: 100%;
+    max-width: 460px;
+    box-shadow: none;
+    border: none;
+    background: transparent;
   }
 
-  .fab-wrap {
-    right: 12px;
-    bottom: 12px;
+  .fab-admin-tag {
+    width: 100%;
+    text-align: center;
+    border-right: none;
+    border-bottom: 1px solid var(--surface-border);
+    padding-right: 0;
+    padding-bottom: 4px;
+    margin-right: 0;
+    margin-bottom: 2px;
   }
 
+  .fab-tool-btn {
+    padding: 8px 12px;
+    font-size: 0.76rem;
+    min-height: 38px;
+  }
+
+  .fab-delete-confirm {
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+    gap: 6px;
+    width: 100%;
+  }
+
+  /* Hide toolbar when panel is open (avoids stacking) */
+  .mobile-hidden {
+    display: none !important;
+  }
+
+  /* Lock FAB — float it above the bottom bar */
+  .fab.fab-lock {
+    position: static;
+    margin: 2px auto;
+  }
+
+  /* ── Forms ──────────────────────────────────────────────────────────────── */
   .form-row {
     grid-template-columns: 1fr;
+  }
+
+  .modal {
+    border-radius: 20px 20px 0 0;
+    max-height: 92vh;
+    margin-top: auto;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+  }
+
+  .modal-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  /* ── Canvas — reserve space for bottom bar ───────────────────────────────── */
+  .canvas-wrap {
+    /* Account for the FAB bottom bar (~64px) */
+    margin-bottom: 64px;
   }
 }
