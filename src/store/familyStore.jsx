@@ -1,29 +1,27 @@
-import { createContext, useContext, useReducer, useState } from 'react';
+import { createContext, useContext, useReducer, useState, useEffect } from 'react';
 import { initialFamilyData } from '../data/familyData';
 import { exampleFamilyData } from '../data/exampleFamilyData';
-
-const STORAGE_KEY = 'relationtree_family_data';
-
-// ─── Initializer ──────────────────────────────────────────────────────────────
-const loadFromStorage = () => {
-    try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) return JSON.parse(stored);
-    } catch (_) { }
-    return initialFamilyData;
-};
+import { useAuth } from '../auth/AuthContext';
 
 // ─── Save Helper ──────────────────────────────────────────────────────────────
-const saveToStorage = (state) => {
-    try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch (_) { }
+const saveToServer = (state, token) => {
+    if (!token) return; // Only save if we have a token
+    fetch('/api/tree', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(state)
+    }).catch(err => console.error('Failed to save', err));
 };
 
 // ─── Reducer ──────────────────────────────────────────────────────────────────
 function reducer(state, action) {
     let newState;
     switch (action.type) {
+        case 'INIT_DATA':
+            return action.data; // Don't trigger save
         case 'ADD_PERSON':
             newState = { ...state, people: [...state.people, action.person] };
             break;
@@ -58,7 +56,9 @@ function reducer(state, action) {
         default:
             return state;
     }
-    saveToStorage(newState);
+
+    // Fire-and-forget save
+    saveToServer(newState, action.token);
     return newState;
 }
 
@@ -66,21 +66,33 @@ function reducer(state, action) {
 const FamilyContext = createContext(null);
 
 export function FamilyProvider({ children }) {
-    const [state, dispatch] = useReducer(reducer, null, loadFromStorage);
+    const [state, dispatch] = useReducer(reducer, null);
     const [isExampleMode, setIsExampleMode] = useState(false);
+    const { token } = useAuth();
 
-    const activePeople = isExampleMode ? exampleFamilyData.people : state.people;
+    useEffect(() => {
+        fetch('/api/tree')
+            .then(res => res.json())
+            .then(data => {
+                dispatch({ type: 'INIT_DATA', data: data || initialFamilyData });
+            })
+            .catch(() => {
+                dispatch({ type: 'INIT_DATA', data: initialFamilyData });
+            });
+    }, []);
+
+    const activePeople = isExampleMode ? exampleFamilyData.people : (state?.people || []);
 
     // Helpers
     const toggleExampleMode = () => setIsExampleMode((prev) => !prev);
 
     // Only allow mutations if NOT in example mode
-    const addPerson = (person) => { if (!isExampleMode) dispatch({ type: 'ADD_PERSON', person }) };
-    const updatePerson = (person) => { if (!isExampleMode) dispatch({ type: 'UPDATE_PERSON', person }) };
-    const deletePerson = (id) => { if (!isExampleMode) dispatch({ type: 'DELETE_PERSON', id }) };
+    const addPerson = (person) => { if (!isExampleMode) dispatch({ type: 'ADD_PERSON', person, token }) };
+    const updatePerson = (person) => { if (!isExampleMode) dispatch({ type: 'UPDATE_PERSON', person, token }) };
+    const deletePerson = (id) => { if (!isExampleMode) dispatch({ type: 'DELETE_PERSON', id, token }) };
 
     const exportJSON = () => {
-        // Always export the real saved state, not the example mock
+        if (!state) return;
         const blob = new Blob([JSON.stringify(state, null, 2)], {
             type: 'application/json',
         });
@@ -97,8 +109,8 @@ export function FamilyProvider({ children }) {
         reader.onload = (e) => {
             try {
                 const data = JSON.parse(e.target.result);
-                dispatch({ type: 'IMPORT_DATA', data });
-                if (isExampleMode) setIsExampleMode(false); // turn off example mode if importing
+                dispatch({ type: 'IMPORT_DATA', data, token });
+                if (isExampleMode) setIsExampleMode(false);
             } catch (_) {
                 alert('Invalid JSON file');
             }
@@ -107,6 +119,10 @@ export function FamilyProvider({ children }) {
     };
 
     const getPersonById = (id) => activePeople.find((p) => p.id === id);
+
+    if (!state) {
+        return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: 'var(--text-color, #e2e8f0)' }}>Loading family tree...</div>;
+    }
 
     return (
         <FamilyContext.Provider

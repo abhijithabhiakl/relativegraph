@@ -304,11 +304,11 @@ export default function FamilyTree({ searchQuery, selectedId, onSelectPerson }) 
                 fitView
                 fitViewOptions={{
                     padding: 0.04,
-                    minZoom: window.innerWidth < 640 ? 0.7 : 0.5,
+                    minZoom: window.innerWidth < 640 ? 0.7 : 0.8,
                     maxZoom: 0.95,
                 }}
                 minZoom={0.08}
-                maxZoom={2.5}
+                maxZoom={1}
                 proOptions={{ hideAttribution: true }}
                 nodesDraggable={false}
                 nodesConnectable={false}
