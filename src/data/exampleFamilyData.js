@@ -11,7 +11,7 @@ export const exampleFamilyData = {
     people: [
 
         // ══════════════════════════════════════════════════════
-        // GENERATION 1 — Grandparents (Mutthashan & Mutthashi)
+        // GENERATION 1 - Grandparents (Mutthashan & Mutthashi)
         // ══════════════════════════════════════════════════════
         {
             id: 'ex-gf01', firstName: 'Madhavan', middleName: 'Kutty', lastName: 'P.',
@@ -31,7 +31,7 @@ export const exampleFamilyData = {
         },
 
         // ══════════════════════════════════════════════════════
-        // GENERATION 2 — Parents & Uncle (Achan, Amma, Maman)
+        // GENERATION 2 - Parents & Uncle (Achan, Amma, Maman)
         // ══════════════════════════════════════════════════════
         {
             id: 'ex-m01', firstName: 'Latha', middleName: '', lastName: 'Madhavan',
@@ -67,7 +67,7 @@ export const exampleFamilyData = {
         },
 
         // ══════════════════════════════════════════════════════
-        // GENERATION 3 — You, Siblings & Cousins
+        // GENERATION 3 - You, Siblings & Cousins
         // ══════════════════════════════════════════════════════
         {
             id: 'ex-you', firstName: 'Abhijith', middleName: 'Narayanan', lastName: 'Sunil',

@@ -1,4 +1,4 @@
-// Initial seed data — replace with your actual family members
+// Initial seed data - replace with your actual family members
 
 export const initialFamilyData = {
     people: [

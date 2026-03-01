@@ -55,7 +55,7 @@ export default function EditFAB({ selectedId, isMobilePanelOpen }) {
                 <span className="fab-admin-tag">
                     {isExampleMode ? '✓ Reference Mode' : '✓ Admin'}
                 </span>
-                {/* Person-specific actions — shown when a node is selected */}
+                {/* Person-specific actions - shown when a node is selected */}
                 {selectedPerson && !isExampleMode && (
                     <>
                         <div className="fab-toolbar-divider" />

@@ -41,7 +41,7 @@ function AppContent() {
     });
   }, []);
 
-  // "Back to Graph" — deselects node + closes panel entirely
+  // "Back to Graph" - deselects node + closes panel entirely
   const handleReturn = useCallback(() => {
     setSelectedId(null);
     setPanelState(null);
@@ -111,7 +111,7 @@ function AppContent() {
         />
       )}
 
-      {/* FAB — hide when panel is visible on mobile */}
+      {/* FAB - hide when panel is visible on mobile */}
       <div className="fab-wrap">
         <EditFAB selectedId={selectedId} isMobilePanelOpen={showPanel} />
       </div>

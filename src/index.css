@@ -431,7 +431,7 @@ body {
   flex-shrink: 0;
 }
 
-/* Back button — hidden on desktop, shown on mobile */
+/* Back button - hidden on desktop, shown on mobile */
 .panel-back-btn {
   display: none;
   align-items: center;
@@ -1237,7 +1237,7 @@ body {
   /* Initials always white inside the colored avatar circle */
 }
 
-/* ─── Responsive — Mobile-first hardcore optimisation ───────────────────────── */
+/* ─── Responsive - Mobile-first hardcore optimisation ───────────────────────── */
 @media (max-width: 640px) {
 
   /* ── Top Bar ─────────────────────────────────────────────────────────────── */
@@ -1265,19 +1265,19 @@ body {
     max-width: 100%;
   }
 
-  /* Touch targets — theme toggle */
+  /* Touch targets - theme toggle */
   .theme-toggle {
     width: 44px;
     height: 44px;
     flex-shrink: 0;
   }
 
-  /* ── Legend — hide on mobile ─────────────────────────────────────────────── */
+  /* ── Legend - hide on mobile ─────────────────────────────────────────────── */
   .legend {
     display: none;
   }
 
-  /* ── Person Panel — bottom sheet ─────────────────────────────────────────── */
+  /* ── Person Panel - bottom sheet ─────────────────────────────────────────── */
   .person-panel {
     /* Override desktop sidebar positioning */
     position: fixed;
@@ -1360,7 +1360,7 @@ body {
     align-items: center;
   }
 
-  /* Panel full-width when open acts as modal — dim backdrop not needed
+  /* Panel full-width when open acts as modal - dim backdrop not needed
      since the canvas is still partially visible above the sheet */
   .panel-avatar {
     width: 70px;
@@ -1375,7 +1375,7 @@ body {
     font-size: 1.05rem;
   }
 
-  /* ── ReactFlow MiniMap — hide on mobile ──────────────────────────────────── */
+  /* ── ReactFlow MiniMap - hide on mobile ──────────────────────────────────── */
   .react-flow__minimap {
     display: none !important;
   }
@@ -1387,7 +1387,7 @@ body {
     right: auto !important;
   }
 
-  /* ── FAB Toolbar — mobile stack ──────────────────────────────────────────── */
+  /* ── FAB Toolbar - mobile stack ──────────────────────────────────────────── */
   .fab-wrap {
     right: 0;
     left: 0;
@@ -1450,7 +1450,7 @@ body {
     display: none !important;
   }
 
-  /* Lock FAB — float it above the bottom bar */
+  /* Lock FAB - float it above the bottom bar */
   .fab.fab-lock {
     position: static;
     margin: 2px auto;
@@ -1477,7 +1477,7 @@ body {
     padding: 0;
   }
 
-  /* ── Canvas — reserve space for bottom bar ───────────────────────────────── */
+  /* ── Canvas - reserve space for bottom bar ───────────────────────────────── */
   .canvas-wrap {
     /* Account for the FAB bottom bar (~64px) */
     margin-bottom: 64px;

@@ -86,23 +86,23 @@ export default function PersonPanel({
             onClick={isPeek ? onExpand : undefined}
             aria-expanded={!isPeek}
         >
-            {/* Drag handle — always visible on mobile, indicates the panel is draggable */}
+            {/* Drag handle - always visible on mobile, indicates the panel is draggable */}
             <div className="panel-drag-handle" aria-hidden="true" />
 
-            {/* ── Peek bar — only visible in peek mode ───────────────────── */}
+            {/* ── Peek bar - only visible in peek mode ───────────────────── */}
             <div className="panel-peek-bar" aria-hidden={!isPeek}>
                 <span className="panel-peek-name">{personDisplayName}</span>
-                {/* Swipe hint — pulsing, non-blocking, disappears once expanded */}
+                {/* Swipe hint - pulsing, non-blocking, disappears once expanded */}
                 <div className="panel-swipe-hint">
                     <ChevronUp size={14} strokeWidth={2.5} />
                     <span>Swipe up for details</span>
                 </div>
             </div>
 
-            {/* ── Full content — clipped in peek, fully visible when full ── */}
+            {/* ── Full content - clipped in peek, fully visible when full ── */}
             <div className="panel-full-content">
                 <div className="panel-header">
-                    {/* Back button — returns to graph (deselects node) */}
+                    {/* Back button - returns to graph (deselects node) */}
                     <button
                         className="panel-back-btn"
                         onClick={(e) => { e.stopPropagation(); onReturn(); }}
@@ -112,7 +112,7 @@ export default function PersonPanel({
                         <span>Back</span>
                     </button>
 
-                    {/* Close button — hides panel, keeps node selected */}
+                    {/* Close button - hides panel, keeps node selected */}
                     <button
                         className="panel-close"
                         onClick={(e) => { e.stopPropagation(); onClose(); }}

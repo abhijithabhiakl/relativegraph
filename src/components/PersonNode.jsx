@@ -1,16 +1,16 @@
 import { memo } from 'react';
 import { Handle, Position } from 'reactflow';
 
-// ─── Generation palette — neutral, beautiful, no personal bias ────────────────
+// ─── Generation palette - neutral, beautiful, no personal bias ────────────────
 // Cycles every 7 generations if the tree goes very deep
 const GEN_PALETTE = [
-    { bg: '#1a0e2e', border: '#7c3aed', text: '#c4b5fd', dot: '#8b5cf6' }, // Gen 0 — deep violet
-    { bg: '#0e1a2e', border: '#2563eb', text: '#93c5fd', dot: '#3b82f6' }, // Gen 1 — royal blue
-    { bg: '#0e2a1a', border: '#059669', text: '#6ee7b7', dot: '#10b981' }, // Gen 2 — emerald
-    { bg: '#1a1a0e', border: '#ca8a04', text: '#fde68a', dot: '#eab308' }, // Gen 3 — gold
-    { bg: '#2a0e1a', border: '#db2777', text: '#f9a8d4', dot: '#ec4899' }, // Gen 4 — rose
-    { bg: '#0e2a2a', border: '#0e7490', text: '#67e8f9', dot: '#06b6d4' }, // Gen 5 — cyan
-    { bg: '#2a1a0e', border: '#c2410c', text: '#fed7aa', dot: '#f97316' }, // Gen 6 — orange
+    { bg: '#1a0e2e', border: '#7c3aed', text: '#c4b5fd', dot: '#8b5cf6' }, // Gen 0 - deep violet
+    { bg: '#0e1a2e', border: '#2563eb', text: '#93c5fd', dot: '#3b82f6' }, // Gen 1 - royal blue
+    { bg: '#0e2a1a', border: '#059669', text: '#6ee7b7', dot: '#10b981' }, // Gen 2 - emerald
+    { bg: '#1a1a0e', border: '#ca8a04', text: '#fde68a', dot: '#eab308' }, // Gen 3 - gold
+    { bg: '#2a0e1a', border: '#db2777', text: '#f9a8d4', dot: '#ec4899' }, // Gen 4 - rose
+    { bg: '#0e2a2a', border: '#0e7490', text: '#67e8f9', dot: '#06b6d4' }, // Gen 5 - cyan
+    { bg: '#2a1a0e', border: '#c2410c', text: '#fed7aa', dot: '#f97316' }, // Gen 6 - orange
 ];
 
 function getInitials(firstName, lastName) {
