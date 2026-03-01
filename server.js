@@ -9,7 +9,13 @@ dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const DATA_FILE = path.join(__dirname, 'data.json');
+const STORAGE_DIR = path.join(__dirname, 'storage');
+const DATA_FILE = path.join(STORAGE_DIR, 'data.json');
+
+// Ensure storage directory exists
+if (!fs.existsSync(STORAGE_DIR)) {
+    fs.mkdirSync(STORAGE_DIR, { recursive: true });
+}
 
 const app = express();
 app.use(cors());

@@ -42,4 +42,4 @@ coverage
 .yarn
 
 # Database
-data.json
+/storage/
