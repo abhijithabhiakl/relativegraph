@@ -4,8 +4,11 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import { PrismaClient } from '@prisma/client';
 
 dotenv.config();
+
+const prisma = new PrismaClient();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -60,23 +63,126 @@ function checkAuth(req, res, next) {
     }
 }
 
-app.get('/api/tree', (req, res) => {
-    if (fs.existsSync(DATA_FILE)) {
-        res.sendFile(DATA_FILE);
-    } else {
-        // Send a 404 or an explicit empty object, letting frontend use initial data
-        res.json(null);
+app.get('/api/tree', async (req, res) => {
+    try {
+        const peopleRecords = await prisma.person.findMany({
+            include: {
+                parents: true,
+                spouses1: true,
+                spouses2: true,
+            }
+        });
+
+        if (!peopleRecords || peopleRecords.length === 0) {
+            return res.json(null);
+        }
+
+        // Map Prisma relational data back to exactly what frontend expects
+        const people = peopleRecords.map(p => {
+            // Reconstruct parentIds
+            const parentIds = p.parents.map(rel => rel.parentId);
+
+            // Reconstruct spouseIds (either they are spouse1 or spouse2)
+            const spouseIds = [
+                ...p.spouses1.map(rel => rel.spouse2Id),
+                ...p.spouses2.map(rel => rel.spouse1Id)
+            ];
+
+            return {
+                id: p.id,
+                firstName: p.firstName,
+                middleName: p.middleName !== null ? p.middleName : undefined,
+                lastName: p.lastName,
+                nickname: p.nickname !== null ? p.nickname : undefined,
+                gender: p.gender,
+                birthYear: p.birthYear,
+                deathYear: p.deathYear,
+                notes: p.notes !== null ? p.notes : undefined,
+                photoUrl: p.photoUrl !== null ? p.photoUrl : undefined,
+                parentIds: parentIds,
+                spouseIds: spouseIds
+            };
+        });
+
+        res.json({ people });
+    } catch (error) {
+        console.error('Error fetching tree:', error);
+        res.status(500).json({ error: 'Failed to read data' });
     }
 });
 
-app.post('/api/tree', checkAuth, (req, res) => {
-    fs.writeFile(DATA_FILE, JSON.stringify(req.body, null, 2), (err) => {
-        if (err) {
-            console.error('Save error:', err);
-            return res.status(500).json({ error: 'Failed to write data' });
-        }
+app.post('/api/tree', checkAuth, async (req, res) => {
+    const { people } = req.body;
+    if (!people || !Array.isArray(people)) {
+        return res.status(400).json({ error: 'Invalid data format' });
+    }
+
+    try {
+        const normalizeName = (name) => {
+            if (!name) return '';
+            return name
+                .toLowerCase()
+                .split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+        };
+
+        // Simple strategy: Clear the graph edges and nodes, and rebuild them in a single transaction
+        await prisma.$transaction(async (tx) => {
+            await tx.parentChild.deleteMany();
+            await tx.spouse.deleteMany();
+            await tx.person.deleteMany();
+
+            for (const p of people) {
+                await tx.person.create({
+                    data: {
+                        id: p.id,
+                        firstName: normalizeName(p.firstName),
+                        middleName: normalizeName(p.middleName),
+                        lastName: normalizeName(p.lastName),
+                        nickname: p.nickname || '',
+                        gender: p.gender || '',
+                        birthYear: p.birthYear || null,
+                        deathYear: p.deathYear || null,
+                        notes: p.notes || '',
+                        photoUrl: p.photoUrl || '',
+                    }
+                });
+            }
+
+            // Rebuild edges
+            const createdParents = new Set();
+            const createdSpouses = new Set();
+
+            for (const p of people) {
+                if (p.parentIds) {
+                    for (const pid of p.parentIds) {
+                        const edgeId = `${pid}_${p.id}`;
+                        if (!createdParents.has(edgeId) && people.find(x => x.id === pid)) {
+                            await tx.parentChild.create({ data: { parentId: pid, childId: p.id } });
+                            createdParents.add(edgeId);
+                        }
+                    }
+                }
+
+                if (p.spouseIds) {
+                    for (const sid of p.spouseIds) {
+                        const ids = [p.id, sid].sort();
+                        const edgeId = `${ids[0]}_${ids[1]}`;
+                        if (!createdSpouses.has(edgeId) && people.find(x => x.id === sid)) {
+                            await tx.spouse.create({ data: { spouse1Id: ids[0], spouse2Id: ids[1] } });
+                            createdSpouses.add(edgeId);
+                        }
+                    }
+                }
+            }
+        });
+
         res.json({ success: true });
-    });
+    } catch (error) {
+        console.error('Save error:', error);
+        res.status(500).json({ error: 'Failed to write data' });
+    }
 });
 
 // Serve frontend if built

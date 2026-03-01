@@ -43,3 +43,5 @@ coverage
 
 # Database
 /storage/
+
+/src/generated/prisma

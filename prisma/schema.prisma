@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../storage/dev.db"
+}
+
+model Person {
+  id         String  @id
+  firstName  String
+  middleName String?
+  lastName   String
+  nickname   String?
+  gender     String
+  birthYear  Int?
+  deathYear  Int?
+  notes      String?
+  photoUrl   String?
+
+  // Relations
+  parents      ParentChild[] @relation("Child")
+  children     ParentChild[] @relation("Parent")
+
+  spouses1     Spouse[] @relation("Spouse1")
+  spouses2     Spouse[] @relation("Spouse2")
+}
+
+model ParentChild {
+  id       String @id @default(uuid())
+  parentId String
+  childId  String
+
+  parent Person @relation("Parent", fields: [parentId], references: [id], onDelete: Cascade)
+  child  Person @relation("Child", fields: [childId], references: [id], onDelete: Cascade)
+
+  @@unique([parentId, childId])
+}
+
+model Spouse {
+  id        String @id @default(uuid())
+  spouse1Id String
+  spouse2Id String
+
+  spouse1 Person @relation("Spouse1", fields: [spouse1Id], references: [id], onDelete: Cascade)
+  spouse2 Person @relation("Spouse2", fields: [spouse2Id], references: [id], onDelete: Cascade)
+
+  @@unique([spouse1Id, spouse2Id])
+}

@@ -1,16 +1,48 @@
-# React + Vite
+# RelationTree
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, open-source React application for visualizing and editing family trees. It uses React Flow for an interactive, zoom-able canvas and SQLite/Prisma for lightweight persistent storage.
 
-Currently, two official plugins are available:
+## Features
+- **Interactive Graph:** Beautiful, dynamically arranged family tree visualizer.
+- **Node Highlighting:** Clicking on individuals highlights immediate family members (spouse, children, parents) intuitively.
+- **Local Storage:** SQLite via Prisma allows for an efficient, self-hosted backend.
+- **Dark Mode:** A clean, built-in light/dark mode UI toggle.
+- **JSON Export/Import:** Easily back up or import entire lineage graphs on the fly.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack
+- React 19 + Vite
+- React Flow (for graph visualization)
+- Express + Node.js (Backend)
+- SQLite + Prisma (Database ORM)
+- Tailwind CSS / Vanilla CSS
 
-## React Compiler
+## Setup Intructions
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 1. Configure the Environment
+Copy the example `.env` file from the repository root:
+```bash
+cp .env.example .env
+```
+Fill in the `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env`. These credentials will act as your admin login to edit the family tree. 
 
-## Expanding the ESLint configuration
+### 2. Install dependencies
+```bash
+npm install
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 3. Initialize the database
+Set up SQLite locally using Prisma. You will run this command once to build the `storage/dev.db` database automatically:
+```bash
+npx prisma db push
+```
+
+### 4. Build and Run
+Start the development server. The frontend and backend run seamlessly together via Vite's proxy for local dev:
+
+```bash
+# Run the application in Dev Mode (Client & Backend concurrently) 
+npm run dev
+node server.js
+```
+
+In production, you would run `npm run build` and then boot `node server.js` to serve the static frontend app alongside the REST API.

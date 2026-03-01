@@ -16,6 +16,23 @@ const saveToServer = (state, token) => {
     }).catch(err => console.error('Failed to save', err));
 };
 
+// ─── Shared Logic ─────────────────────────────────────────────────────────────
+const normalizeName = (name) => {
+    if (!name) return '';
+    return name
+        .toLowerCase()
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+};
+
+const normalizePersonNames = (person) => ({
+    ...person,
+    firstName: normalizeName(person.firstName),
+    middleName: normalizeName(person.middleName),
+    lastName: normalizeName(person.lastName),
+});
+
 // ─── Reducer ──────────────────────────────────────────────────────────────────
 function reducer(state, action) {
     let newState;
@@ -23,13 +40,13 @@ function reducer(state, action) {
         case 'INIT_DATA':
             return action.data; // Don't trigger save
         case 'ADD_PERSON':
-            newState = { ...state, people: [...state.people, action.person] };
+            newState = { ...state, people: [...state.people, normalizePersonNames(action.person)] };
             break;
         case 'UPDATE_PERSON':
             newState = {
                 ...state,
                 people: state.people.map((p) =>
-                    p.id === action.person.id ? action.person : p
+                    p.id === action.person.id ? normalizePersonNames(action.person) : p
                 ),
             };
             break;
