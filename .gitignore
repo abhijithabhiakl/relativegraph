@@ -43,5 +43,9 @@ coverage
 
 # Database
 /storage/
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
 
 /src/generated/prisma
