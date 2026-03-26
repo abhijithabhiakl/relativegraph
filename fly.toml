@@ -1,0 +1,28 @@
+# fly.toml app configuration file generated for relativegraph
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+
+app = "relativegraph"
+primary_region = "ams" # You can change this to your preferred region (e.g., 'lax' or 'hkg')
+
+[build]
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[mounts]]
+  source = "relativegraph_data"
+  destination = "/storage"
+
+[env]
+  PORT = "3000"
+  DATABASE_URL = "file:/storage/dev.db"
+
+[[vm]]
+  memory = "256mb"
+  cpu_kind = "shared"
+  cpus = 1
